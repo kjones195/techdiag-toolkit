@@ -12,7 +12,11 @@ if (-not (Test-Path $packageDir)) { New-Item -ItemType Directory -Path $packageD
 $networkingDir   = Join-Path $packageDir "Networking"
 $eventViewerDir  = Join-Path $packageDir "EventViewer"
 $systemInfoDir   = Join-Path $packageDir "SystemInfo"
-foreach ($subdir in @($networkingDir, $eventViewerDir, $systemInfoDir)) {
+$firewallDir = Join-Path $packageDir "Firewall"
+$hardwareDir = Join-Path $packageDir "Hardware"
+$wlanDir = Join-Path $packageDir "WLAN"
+$miscDir = Join-Path $packageDir "Misc"
+foreach ($subdir in @($networkingDir, $eventViewerDir, $systemInfoDir, $firewallDir, $hardwareDir, $wlanDir, $miscDir)) {
     if (-not (Test-Path $subdir)) { New-Item -ItemType Directory -Path $subdir | Out-Null }
 }
 
@@ -97,15 +101,9 @@ try {
         }
         if (Test-Path $cabFile) {
             Write-Host "CAB file extraction complete: $cabFile"
-            # ===== CAB Extraction and Sorting Logic =====
-# Prepare extra subfolders
-$firewallDir = Join-Path $packageDir "Firewall"
-$hardwareDir = Join-Path $packageDir "Hardware"
-$wlanDir = Join-Path $packageDir "WLAN"
-$miscDir = Join-Path $packageDir "Misc"
-foreach ($subdir in @($firewallDir, $hardwareDir, $wlanDir, $miscDir)) {
-    if (-not (Test-Path $subdir)) { New-Item -ItemType Directory -Path $subdir | Out-Null }
-}
+
+# ===== CAB Extraction and Sorting Logic =====
+
 # Extract CAB to temp directory under Networking
 $cabExtractDir = Join-Path $networkingDir "CAB_Contents"
 if (-not (Test-Path $cabExtractDir)) { New-Item -ItemType Directory -Path $cabExtractDir | Out-Null }
@@ -199,6 +197,5 @@ Write-Host "Sorting completed"
     Write-Host "Packaging diagnostics folder into: $zipFile"
     Compress-Archive -Path $packageDir -DestinationPath $zipFile -Force
     Write-Host "Diagnostics package created: $zipFile"
-
     Write-Host "All diagnostics saved to: $packageDir"
 }
